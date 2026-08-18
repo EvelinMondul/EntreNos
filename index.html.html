@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>EntreNos</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 54C16 40 8 32 8 22c0-7 5-11 11-10 6 1 11 7 13 12 2-5 7-11 13-12 6-1 11 3 11 10 0 10-8 18-24 32z' fill='none' stroke='%23E8735A' stroke-width='5' stroke-linejoin='round'/></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  /* ============================================================
+     🎨 PALETA PASTEL
+     ============================================================ */
+  :root{
+    --paper:#FBF4EC; --ink:#2E3150; --muted:#8A85A0; --card:#FFFFFF; --line:#EFE6DC;
+    --radius:20px; --shadow:0 14px 34px -18px rgba(46,49,80,.24); --shadow-sm:0 6px 18px -10px rgba(46,49,80,.18);
+    --brand:#E8735A;                                   /* coral: marca */
+    --food:#7FB287; --food-soft:#E7F2E7; --food-dark:#3F7A46;   /* verde: comer */
+    --move:#A99BD6; --move-soft:#ECE6F8; --move-dark:#6A5AA0;   /* lavanda: moverme */
+    --feel:#E9A96B; --feel-soft:#FBECD9; --feel-dark:#B57327;   /* durazno: sentir */
+    --myth:#E8735A; --myth-soft:#FBE3DC; --myth-dark:#C24A34;   /* coral: mitos */
+    --chat:#7FA8CC; --chat-soft:#E3EDF6; --chat-dark:#3E6E94;   /* azul: preguntar */
+    --nav-h:74px;
+  }
+  *{box-sizing:border-box} html,body{margin:0;padding:0}
+  body{font-family:'Inter',system-ui,sans-serif;background:var(--paper);color:var(--ink);line-height:1.55;-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom));position:relative}
+  h1,h2,h3{font-family:'Fraunces',Georgia,serif;line-height:1.12;margin:0;letter-spacing:-.01em}
+  button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+  .wrap{max-width:720px;margin:0 auto;padding:0 20px;position:relative;z-index:1}
+  .ico{width:24px;height:24px;display:block;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+  .wordmark{font-family:'Pacifico',cursive;font-weight:400;letter-spacing:.5px}
+  .wordmark .nos{color:var(--brand)}
+
+  /* ---------- Fondos orgánicos ---------- */
+  .bg-blobs{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+  .blob{position:absolute;border-radius:52% 48% 50% 50%/50% 52% 48% 50%;opacity:.4;filter:blur(4px)}
+  .b1{width:280px;height:260px;background:#F7D8CE;top:-90px;left:-80px}
+  .b2{width:240px;height:230px;background:#E3DAF4;top:-70px;right:-70px}
+  .b3{width:260px;height:250px;background:#DCEEDD;bottom:60px;left:-90px}
+  .b4{width:230px;height:220px;background:#FBE6CF;bottom:-40px;right:-70px}
+
+  /* ---------- Bienvenida ---------- */
+  #gate{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden;
+    background:linear-gradient(160deg,#F6C5B6 0%,#D8CBF0 52%,#F8DFC0 120%);transition:opacity .5s ease}
+  #gate.hide{opacity:0;pointer-events:none}
+  #gate .gblob{position:absolute;border-radius:50%;opacity:.5;filter:blur(2px)}
+  .gate-card{background:var(--card);border-radius:30px;padding:38px 28px;max-width:400px;width:100%;text-align:center;box-shadow:0 40px 90px -30px rgba(0,0,0,.45);position:relative;z-index:1}
+  .gate-logo{width:76px;height:76px;margin:0 auto 12px;color:var(--brand)}
+  .gate-card h1{font-size:44px;margin-bottom:12px}
+  .gate-tagline{display:inline-block;font-size:14px;font-weight:600;color:#5B4E7A;background:linear-gradient(transparent 55%,#E3DAF4 55%);padding:0 6px;margin:0 0 20px}
+  .gate-card input{width:100%;padding:15px 16px;border-radius:14px;border:1.5px solid var(--line);font-size:16px;font-family:inherit;text-align:center;margin-bottom:14px;background:#FDFAF6}
+  .gate-card input:focus{outline:none;border-color:var(--brand)}
+  .btn-primary{background:var(--ink);color:#fff;padding:15px 22px;border-radius:14px;font-weight:600;font-size:16px;width:100%;transition:transform .15s ease}
+  .btn-primary:active{transform:scale(.98)}
+
+  /* ---------- Encabezado ---------- */
+  header.hero{padding:28px 0 8px}
+  .brandrow{display:flex;align-items:center;gap:9px;margin-bottom:14px}
+  .brandrow .logo{width:30px;height:30px;color:var(--brand)}
+  .brandrow .name{font-family:'Pacifico',cursive;font-size:24px;color:var(--ink)}
+  .brandrow .name .nos{color:var(--brand)}
+  .greet{font-size:25px;font-weight:600}
+  .greet .accent{color:var(--brand)}
+  .affirm{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin-top:14px;display:flex;align-items:flex-start;gap:12px;box-shadow:var(--shadow-sm)}
+  .affirm .spark{color:var(--brand);flex:none;margin-top:1px} .affirm .spark .ico{width:20px;height:20px}
+  .affirm span.t{font-size:14.5px;font-weight:500;color:#5C5670}
+
+  section.panel{display:none;padding:16px 0 24px;animation:fade .35s ease} section.panel.on{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .eyebrow{font-weight:700;font-size:11.5px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:5px}
+  .eyebrow.food{color:var(--food-dark)}.eyebrow.move{color:var(--move-dark)}.eyebrow.feel{color:var(--feel-dark)}.eyebrow.myth{color:var(--myth-dark)}.eyebrow.chat{color:var(--chat-dark)}
+  h2.big{font-size:27px;font-weight:600;margin-bottom:6px}
+  .lead{color:var(--muted);margin:0 0 20px;font-size:14.5px;max-width:52ch}
+
+  .filterbar{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+  .chip{background:var(--card);border:1.5px solid var(--line);border-radius:100px;padding:8px 15px;font-size:13px;font-weight:600;color:#726C86;transition:.15s ease}
+  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+
+  /* ---------- Recetas ---------- */
+  .grid{display:grid;grid-template-columns:1fr;gap:14px}
+  @media(min-width:620px){.grid{grid-template-columns:1fr 1fr}}
+  .recipe{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden;box-shadow:var(--shadow-sm)}
+  .recipe .band{height:6px;background:var(--food)} .recipe .body{padding:18px}
+  .recipe .row{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+  .recipe h3{font-size:19px;font-weight:600} .recipe .why{color:var(--muted);font-size:13.5px;margin:6px 0 12px}
+  .fav{flex:none;color:#D7CEDD;transition:.18s ease;padding:2px} .fav .ico{width:23px;height:23px} .fav.on{color:var(--brand)} .fav.on .ico{fill:var(--brand)}
+  .tag{display:inline-flex;align-items:center;gap:6px;background:var(--food-soft);color:var(--food-dark);font-size:11.5px;font-weight:700;padding:4px 11px;border-radius:100px;margin-bottom:10px;letter-spacing:.02em}
+  details{border-top:1px solid var(--line);margin-top:4px;padding-top:10px}
+  summary{font-weight:700;font-size:13px;cursor:pointer;color:var(--food-dark);list-style:none;display:flex;align-items:center;gap:6px}
+  summary::-webkit-details-marker{display:none}
+  summary .chev{transition:transform .2s ease} details[open] summary .chev{transform:rotate(90deg)}
+  .recipe ul,.recipe ol{margin:10px 0 0;padding-left:18px;font-size:14px} .recipe li{margin:4px 0}
+  .cmt{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+  .cmt label{font-size:12px;font-weight:700;color:var(--muted);display:block;margin-bottom:6px;letter-spacing:.02em}
+  .cmt textarea{width:100%;border:1.5px solid var(--line);border-radius:12px;padding:10px 12px;font-family:inherit;font-size:13.5px;resize:vertical;min-height:46px;background:#FDFAF6}
+  .cmt textarea:focus{outline:none;border-color:var(--food)}
+  .saved{font-size:12px;color:var(--food-dark);font-weight:700;opacity:0;transition:.3s} .saved.show{opacity:1}
+
+  /* ---------- Rutinas ---------- */
+  .routine{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:18px;margin-bottom:14px}
+  .routine h3{font-size:19px;font-weight:600;color:var(--move-dark)} .routine .meta{color:var(--muted);font-size:13px;margin:4px 0 14px}
+  .routine ol{margin:0;padding-left:20px;font-size:14.5px} .routine li{margin:6px 0}
+  .timer{display:flex;align-items:center;gap:12px;margin-top:16px;background:var(--move-soft);border-radius:14px;padding:12px 14px;flex-wrap:wrap}
+  .timer .clock{font-family:'Fraunces';font-size:30px;font-weight:600;color:var(--move-dark);min-width:74px;text-align:center;font-variant-numeric:tabular-nums}
+  .timer button{background:var(--move);color:#fff;font-weight:600;padding:10px 18px;border-radius:11px;font-size:14px}
+  .timer button.ghost{background:#fff;color:var(--move-dark);border:1.5px solid var(--move)}
+  .note{background:#FBECD9;border:1px solid #F1DBB8;border-radius:14px;padding:14px 16px;font-size:13.5px;color:#9A6A22;margin-top:6px;display:flex;gap:10px} .note .ico{flex:none;color:#C98F2F;width:20px;height:20px;margin-top:1px} .note b{color:#875C16}
+
+  /* ---------- Emociones ---------- */
+  .moodpick{display:flex;gap:9px;flex-wrap:wrap;margin:8px 0 16px}
+  .moodpick button{background:var(--card);border:1.5px solid var(--line);border-radius:100px;padding:10px 16px;font-size:14px;font-weight:600;color:#726C86;transition:.15s ease}
+  .moodpick button.on{border-color:var(--feel);background:var(--feel-soft);color:var(--feel-dark)}
+  .moodmsg{background:var(--feel-soft);border-radius:16px;padding:16px 18px;font-weight:500;color:var(--feel-dark);font-size:14.5px;display:none} .moodmsg.show{display:block;animation:fade .3s ease}
+  .breath-wrap{display:flex;flex-direction:column;align-items:center;text-align:center;background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:28px 24px;margin:18px 0}
+  .breath-wrap h3{font-size:19px;font-weight:600;color:var(--feel-dark)}
+  .orb{width:116px;height:116px;border-radius:50%;background:radial-gradient(circle at 36% 30%,#F5CB9C,#E9A96B);margin:14px 0 6px;box-shadow:0 12px 30px -8px rgba(233,169,107,.55)} .orb.run{animation:breathe 11s ease-in-out infinite}
+  @keyframes breathe{0%{transform:scale(.66)}36%{transform:scale(1.12)}64%{transform:scale(1.12)}100%{transform:scale(.66)}}
+  .breath-label{font-family:'Fraunces';font-weight:600;font-size:19px;color:var(--feel-dark);margin-top:10px;min-height:26px}
+  .breath-wrap button{margin-top:16px;background:var(--feel);color:#fff;font-weight:600;padding:11px 22px;border-radius:12px;font-size:15px}
+  .help{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--feel);border-radius:16px;padding:20px;margin-top:8px;box-shadow:var(--shadow-sm)}
+  .help h3{font-size:19px;font-weight:600;color:var(--feel-dark);margin-bottom:8px} .help ul{margin:12px 0 0;padding-left:20px;font-size:14.5px} .help li{margin:7px 0}
+  .help .lines{background:var(--feel-soft);border-radius:12px;padding:14px 16px;margin-top:14px;font-size:14px} .help .lines b{display:block;margin-bottom:5px;color:var(--feel-dark)}
+  .placeholder{color:var(--myth-dark);font-weight:700}
+
+  /* ---------- Mitos ---------- */
+  .myths{display:grid;grid-template-columns:1fr;gap:14px} @media(min-width:620px){.myths{grid-template-columns:1fr 1fr}}
+  .mcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);padding:18px;cursor:pointer;transition:.18s ease}
+  .mcard:active{transform:scale(.99)}
+  .mcat{display:inline-block;font-size:10.5px;font-weight:700;padding:4px 11px;border-radius:100px;margin-bottom:10px;background:var(--myth-soft);color:var(--myth-dark);letter-spacing:.06em;text-transform:uppercase}
+  .mcard .q{font-family:'Fraunces';font-weight:600;font-size:17px;line-height:1.3} .mtap{font-size:12.5px;color:var(--myth-dark);font-weight:700;margin-top:10px}
+  .mreveal{display:none;margin-top:12px;border-top:1px solid var(--line);padding-top:12px} .mcard.open .mreveal{display:block;animation:fade .3s ease} .mcard.open .mtap{display:none}
+  .verdict{font-family:'Fraunces';font-weight:700;font-size:17px} .verdict.v{color:var(--food-dark)} .verdict.m{color:var(--myth-dark)}
+  .mexplain{font-size:13.5px;color:var(--muted);margin-top:5px}
+
+  /* ---------- Chat Semi ---------- */
+  .chatbox{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow-sm);overflow:hidden}
+  .chatlog{padding:18px;min-height:220px;max-height:380px;overflow-y:auto;display:flex;flex-direction:column;gap:10px}
+  .bub{max-width:86%;padding:12px 15px;border-radius:16px;font-size:14.5px;line-height:1.5}
+  .bub.bot{background:var(--chat-soft);color:var(--chat-dark);border-bottom-left-radius:5px;align-self:flex-start}
+  .bub.me{background:var(--ink);color:#fff;border-bottom-right-radius:5px;align-self:flex-end}
+  .suggests{display:flex;gap:8px;flex-wrap:wrap;padding:0 16px 14px}
+  .suggests button{background:#fff;border:1.5px solid var(--chat);color:var(--chat-dark);border-radius:100px;padding:9px 14px;font-size:12.5px;font-weight:600;text-align:left;transition:.15s ease}
+  .suggests button:active{background:var(--chat-soft)}
+  .chatform{display:flex;gap:8px;padding:14px;border-top:1px solid var(--line);background:#FDFAF6}
+  .chatform input{flex:1;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;font-size:15px;font-family:inherit;background:#fff}
+  .chatform input:focus{outline:none;border-color:var(--chat)}
+  .chatform button{background:var(--chat);color:#fff;font-weight:600;padding:0 18px;border-radius:14px;font-size:15px}
+  .safetybar{background:var(--chat-soft);border-radius:14px;padding:14px 16px;font-size:13px;color:var(--chat-dark);margin-bottom:16px;display:flex;gap:10px} .safetybar .ico{flex:none;width:20px;height:20px;margin-top:1px} .safetybar b{color:#2A5578}
+
+  /* ---------- Navegación inferior ---------- */
+  .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:70;background:rgba(251,244,236,.92);backdrop-filter:blur(12px);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom)}
+  .bottomnav .inner{max-width:520px;margin:0 auto;display:flex;height:var(--nav-h)}
+  .bottomnav button{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#6E6684;font-size:10.5px;font-weight:600;transition:.15s ease}
+  .bottomnav button .ico{width:23px;height:23px;transition:.15s ease}
+  .bottomnav button[data-k="food"].on{color:var(--food-dark)}
+  .bottomnav button[data-k="move"].on{color:var(--move-dark)}
+  .bottomnav button[data-k="feel"].on{color:var(--feel-dark)}
+  .bottomnav button[data-k="myth"].on{color:var(--myth-dark)}
+  .bottomnav button[data-k="chat"].on{color:var(--chat-dark)}
+  .bottomnav button.on .ico{transform:translateY(-2px)}
+
+  footer{padding:8px 0 20px;color:var(--muted);font-size:12px;text-align:center}
+  footer .tagline{font-family:'Pacifico',cursive;font-size:16px;color:var(--brand);display:block;margin-bottom:8px}
+  .dbflag{font-size:11px;text-align:center;color:var(--muted);padding:6px}
+  .reset{background:none;color:var(--muted);text-decoration:underline;font-size:12px;margin-top:4px}
+  @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="bg-blobs" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+
+<!-- ===== Bienvenida ===== -->
+<div id="gate">
+  <div class="gblob" style="width:150px;height:150px;background:#F2B8A6;top:8%;left:6%"></div>
+  <div class="gblob" style="width:120px;height:120px;background:#CFC0EC;bottom:12%;right:8%"></div>
+  <div class="gblob" style="width:90px;height:90px;background:#C9E4CB;top:16%;right:16%"></div>
+  <div class="gate-card">
+    <svg class="gate-logo" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M32 54C16 40 8 32 8 22c0-7 5-11 11-10 6 1 11 7 13 12 2-5 7-11 13-12 6-1 11 3 11 10 0 10-8 18-24 32z"/>
+      <path d="M14 30c-6 3-8 10-5 15"/><path d="M50 30c6 3 8 10 5 15"/>
+    </svg>
+    <h1 class="wordmark">Entre<span class="nos">Nos</span></h1>
+    <span class="gate-tagline">Un espacio para cuidarnos mientras crecemos</span>
+    <input id="nameInput" type="text" placeholder="Tu nombre" maxlength="24" autocomplete="off">
+    <button class="btn-primary" id="enterBtn">Entrar</button>
+  </div>
+</div>
+
+<div class="wrap">
+  <header class="hero">
+    <div class="brandrow">
+      <svg class="logo" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M32 54C16 40 8 32 8 22c0-7 5-11 11-10 6 1 11 7 13 12 2-5 7-11 13-12 6-1 11 3 11 10 0 10-8 18-24 32z"/>
+        <path d="M14 30c-6 3-8 10-5 15"/><path d="M50 30c6 3 8 10 5 15"/>
+      </svg>
+      <span class="name">Entre<span class="nos">Nos</span></span>
+    </div>
+    <div class="greet">Hola, <span class="accent" id="who">amig@</span></div>
+    <div class="affirm">
+      <span class="spark"><svg class="ico" viewBox="0 0 24 24"><path d="M12 3l1.6 4.8L18 9.4l-4.4 1.6L12 16l-1.6-5L6 9.4l4.4-1.6z"/></svg></span>
+      <span class="t" id="affirmText">Estás justo donde necesitas estar hoy.</span>
+    </div>
+  </header>
+
+  <section class="panel on" data-p="food">
+    <div class="eyebrow food">Comer para crecer</div>
+    <h2 class="big">Recetas para tu energía</h2>
+    <p class="lead">Comer bien no es comer menos: es darle a tu cuerpo lo que necesita para crecer, concentrarte y tener energía. Guarda tus favoritas y deja tus notas.</p>
+    <div class="filterbar" id="filters">
+      <button class="chip on" data-f="all">Todas</button>
+      <button class="chip" data-f="fav">Mis favoritas</button>
+      <button class="chip" data-f="rapido">Rápidas</button>
+      <button class="chip" data-f="dulce">Dulces sanas</button>
+    </div>
+    <div class="grid" id="recipes"></div>
+  </section>
+
+  <section class="panel" data-p="move">
+    <div class="eyebrow move">Moverme con gusto</div>
+    <h2 class="big">Rutinas para sentirte bien</h2>
+    <p class="lead">Nos movemos por salud, energía y porque se siente bien, no para cambiar cómo nos vemos. Empieza suave, respeta tu cuerpo y descansa cuando lo necesites.</p>
+    <div class="note"><svg class="ico" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4M12 16h.01"/></svg><div><b>Antes de empezar:</b> ropa cómoda, agua cerca y movimientos sin dolor. Si algo duele o te cuesta respirar, para y descansa.</div></div>
+    <div id="routines" style="margin-top:16px"></div>
+  </section>
+
+  <section class="panel" data-p="feel">
+    <div class="eyebrow feel">Cómo me siento</div>
+    <h2 class="big">Tus emociones importan</h2>
+    <p class="lead">Todas las emociones son válidas, incluso las difíciles. Aquí puedes hacer una pausa, respirar y saber qué hacer si necesitas apoyo.</p>
+    <h3 style="font-size:16px;font-weight:600;margin-bottom:4px">¿Cómo te sientes ahora?</h3>
+    <div class="moodpick" id="moodpick">
+      <button data-m="feliz">Feliz</button>
+      <button data-m="tranquilo">Tranquil@</button>
+      <button data-m="cansado">Cansad@</button>
+      <button data-m="preocupado">Preocupad@</button>
+      <button data-m="triste">Triste</button>
+      <button data-m="molesto">Molest@</button>
+    </div>
+    <div class="moodmsg" id="moodmsg"></div>
+    <div class="breath-wrap">
+      <h3>Respiración para calmarte</h3>
+      <p style="color:var(--muted);font-size:13.5px;margin:6px 0 0">Sigue el círculo: inhala, sostén y suelta despacio.</p>
+      <div class="orb" id="orb"></div>
+      <div class="breath-label" id="breathLabel">Presiona empezar</div>
+      <button id="breathBtn">Empezar</button>
+    </div>
+    <div class="help">
+      <h3>Si necesitas ayuda, no estás sol@</h3>
+      <p style="font-size:14px;color:var(--muted);margin:0">Pedir ayuda es de valientes. Si algo te preocupa mucho, te sientes en peligro o llevas varios días sintiéndote muy mal, habla con alguien en quien confíes:</p>
+      <ul>
+        <li>Un <b>familiar</b> o adulto de tu casa con quien te sientas seguro.</li>
+        <li>Un <b>docente, orientador/a o psicólogo/a</b> de tu colegio.</li>
+        <li>Un <b>amigo/a</b> de confianza que pueda acompañarte.</li>
+      </ul>
+      <div class="lines"><b>Líneas de apoyo</b>
+        <span class="placeholder">[ Profe: escribe aquí las líneas verificadas de tu ciudad/colegio ]</span><br>
+        Ej.: orientación escolar, línea de salud mental local, emergencias.
+      </div>
+    </div>
+  </section>
+
+  <section class="panel" data-p="myth">
+    <div class="eyebrow myth">Mitos y verdades</div>
+    <h2 class="big">¿Mito o verdad?</h2>
+    <p class="lead">Sobre crecer, la comida y las emociones circulan muchas ideas que no son ciertas. Toca cada tarjeta para descubrir la respuesta.</p>
+    <div class="filterbar" id="mfilters">
+      <button class="chip on" data-mc="all">Todos</button>
+      <button class="chip" data-mc="adolescencia">Adolescencia</button>
+      <button class="chip" data-mc="alimentacion">Alimentación</button>
+      <button class="chip" data-mc="emociones">Emociones</button>
+    </div>
+    <div class="myths" id="mythbox"></div>
+  </section>
+
+  <section class="panel" data-p="chat">
+    <div class="eyebrow chat">Preguntar</div>
+    <h2 class="big">Habla con Semi</h2>
+    <p class="lead">Toca una pregunta o escribe la tuya. Semi te responde con información preparada por tus profes.</p>
+    <div class="safetybar"><svg class="ico" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg><div><b>Para cuidarte:</b> Semi te da información general. Si algo te preocupa de verdad, habla siempre con tu familia, tu profe o el orientador del colegio.</div></div>
+    <div class="chatbox">
+      <div class="chatlog" id="chatlog"></div>
+      <div class="suggests" id="suggests"></div>
+      <div class="chatform">
+        <input id="chatInput" type="text" placeholder="Escribe tu pregunta…" maxlength="200" autocomplete="off">
+        <button id="chatSend">Enviar</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <span class="tagline">Aquí, todas las preguntas importan.</span>
+    EntreNos · Espacio de bienestar escolar<br>
+    Acompaña y orienta; no reemplaza la ayuda de un adulto o profesional.
+    <div class="dbflag" id="dbflag"></div>
+    <button class="reset" id="resetBtn">Empezar de nuevo</button>
+  </footer>
+</div>
+
+<nav class="bottomnav">
+  <div class="inner">
+    <button data-k="food" class="on">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M6 3v7a2 2 0 0 0 4 0V3M8 10v11"/><path d="M16 3c-1.5 0-2.5 1.8-2.5 4s1 4 2.5 4 2.5-1.8 2.5-4-1-4-2.5-4zM16 11v10"/></svg>
+      <span>Comer</span>
+    </button>
+    <button data-k="move">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M22 12h-4l-3 8-4-16-3 8H2"/></svg>
+      <span>Moverme</span>
+    </button>
+    <button data-k="feel">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M20.8 5.6a5.4 5.4 0 0 0-7.6 0L12 6.7l-1.2-1.1a5.4 5.4 0 1 0-7.6 7.6L12 22l8.8-8.8a5.4 5.4 0 0 0 0-7.6z"/></svg>
+      <span>Sentir</span>
+    </button>
+    <button data-k="myth">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.9 10.6c.6.5.9 1.2.9 2V16h6v-.4c0-.8.3-1.5.9-2A6 6 0 0 0 12 3z"/></svg>
+      <span>Mitos</span>
+    </button>
+    <button data-k="chat">
+      <svg class="ico" viewBox="0 0 24 24"><path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.1A8.4 8.4 0 1 1 21 11.5z"/></svg>
+      <span>Preguntar</span>
+    </button>
+  </div>
+</nav>
+
+<script>
+/* ============================================================
+   🔌 CONEXIÓN A SUPABASE — pega tu clave anon public abajo.
+   ============================================================ */
+const SUPABASE_URL = "https://vrdfaxmjuxweleiifjtu.supabase.co";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyZGZheG1qdXh3ZWxlaWlmanR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NzUxNzMsImV4cCI6MjEwMjA1MTE3M30.fvN72vozpwnHxlhVRr9IVx1AyryuHZtoYu_4cKnAnWg";
+
+let sb=null, USE_SB=false;
+try{ if(SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith("PEGA_AQUI") && window.supabase){ sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY); USE_SB=true; } }catch(e){ USE_SB=false; }
+
+const mem={};
+const store={
+  async get(k){ try{ if(window.storage){ const r=await window.storage.get(k); return r?r.value:null; } }catch(e){} return (k in mem)?mem[k]:null; },
+  async set(k,v){ mem[k]=v; try{ if(window.storage){ await window.storage.set(k,v); } }catch(e){} }
+};
+let DEVICE="dev-anon";
+async function initDevice(){ let d=await store.get('device'); if(!d){ d='dev-'+Math.random().toString(36).slice(2)+Date.now().toString(36); await store.set('device',d); } DEVICE=d; }
+
+const AFFIRMATIONS=["Estás justo donde necesitas estar hoy.","Tu cuerpo está creciendo y hace un trabajo increíble.","Cuidarte es una forma de quererte.","Cada pequeño paso cuenta. Vas bien.","Mereces comida rica, movimiento y descanso.","Tus emociones son válidas, todas.","Hoy es un buen día para intentarlo."];
+let RECIPES=[
+  { id:"arepa-huevo", name:"Arepa rellena de huevo y aguacate", tags:["rapido"], why:"Energía que dura toda la mañana, con proteína para crecer.", ing:["1 arepa de maíz","1 huevo","1/4 de aguacate","Tomate en rodajas","Una pizca de sal"], steps:["Asa la arepa hasta que dore.","Cocina el huevo al gusto.","Rellena con huevo, aguacate y tomate."] },
+  { id:"batido-verde", name:"Batido de banano y espinaca", tags:["rapido","dulce"], why:"Dulce natural, hierro y calcio para tus huesos.", ing:["1 banano","1 puñado de espinaca","1 vaso de leche o bebida vegetal","1 cucharada de avena"], steps:["Pon todo en la licuadora.","Licúa hasta que quede cremoso.","Sirve bien frío."] },
+  { id:"wrap-pollo", name:"Wrap de pollo y vegetales", tags:[], why:"Proteína y vegetales para concentrarte en clase.", ing:["1 tortilla integral","Pollo desmechado","Lechuga y zanahoria rallada","1 cucharada de yogur natural"], steps:["Mezcla el pollo con el yogur.","Coloca todo sobre la tortilla.","Enrolla firme y corta por la mitad."] },
+  { id:"avena-frutas", name:"Avena con frutas de la mañana", tags:["dulce"], why:"Fibra que te mantiene con energía y buen ánimo.", ing:["1/2 taza de avena","1 taza de leche o agua","Fruta picada","Canela al gusto"], steps:["Cocina la avena con la leche.","Revuelve hasta espesar.","Sirve con la fruta y canela."] },
+  { id:"ensalada-frutas", name:"Ensalada de frutas con yogur", tags:["rapido","dulce"], why:"Vitaminas y frescura para un antojo dulce y sano.", ing:["Frutas picadas","2 cucharadas de yogur natural","1 cucharadita de miel","Granola opcional"], steps:["Pica las frutas en un tazón.","Agrega yogur y miel.","Espolvorea granola si quieres."] },
+  { id:"garbanzos", name:"Garbanzos salteados con arroz", tags:[], why:"Proteína vegetal y energía para jugar o entrenar.", ing:["1 taza de garbanzos cocidos","1/2 taza de arroz","Cebolla y pimentón","Aceite y limón"], steps:["Sofríe cebolla y pimentón.","Agrega garbanzos y saltea 5 min.","Sirve sobre el arroz con limón."] }
+];
+let ROUTINES=[
+  { id:"activacion", name:"Activación en 10 minutos", meta:"Para empezar el día o antes de estudiar · sin equipo", secs:600, moves:["Marcha en tu lugar · 1 min","Círculos de brazos · 30 seg","Sentadillas lentas · 10","Estocadas suaves · 6 por pierna","Saltos suaves o marcha rápida · 1 min","Respira y estírate · 1 min"] },
+  { id:"fuerza", name:"Fuerza sin equipo", meta:"Todo el cuerpo a tu ritmo · descansa entre series", secs:900, moves:["Sentadillas · 12","Flexiones (de rodillas si prefieres) · 8","Plancha · 20 seg","Puente de glúteos · 12","Descansa 1 min y repite 2 veces"] },
+  { id:"calma", name:"Estiramiento y calma", meta:"Ideal para la noche o después de moverte", secs:420, moves:["Estira el cuello a cada lado · 20 seg","Brazos sobre la cabeza · 20 seg","Toca tus pies suave · 30 seg","Postura del niño · 40 seg","Respira profundo 5 veces"] }
+];
+let MYTHS=[
+  { cat:"adolescencia", q:"Los granitos salen solo por no lavarse la cara.", answer:"m", explain:"Es un mito. En la adolescencia las hormonas cambian y eso influye mucho. La higiene ayuda, pero no es la única causa." },
+  { cat:"adolescencia", q:"Cada persona crece a su propio ritmo.", answer:"v", explain:"¡Verdad! Hay quien pega el estirón antes y quien lo hace después. Todos los ritmos son normales." },
+  { cat:"adolescencia", q:"Dormir bien ayuda a crecer.", answer:"v", explain:"¡Verdad! Mientras duermes tu cuerpo libera hormonas de crecimiento. Por eso el descanso es tan importante." },
+  { cat:"alimentacion", q:"Saltarse comidas es bueno para estar sano.", answer:"m", explain:"Es un mito. Tu cuerpo necesita energía durante el día para crecer y concentrarte. Comer con regularidad es mejor." },
+  { cat:"alimentacion", q:"Las frutas son un buen postre dulce.", answer:"v", explain:"¡Verdad! Tienen azúcar natural, vitaminas y fibra. Son una forma rica de darte un gusto dulce." },
+  { cat:"alimentacion", q:"Hay alimentos 'prohibidos' que nunca debes comer.", answer:"m", explain:"Es un mito. No se trata de prohibir, sino de equilibrio: de todo un poco, y más de lo que nutre." },
+  { cat:"emociones", q:"Llorar es de débiles.", answer:"m", explain:"Es un mito. Llorar es una forma sana de soltar lo que sentimos. Todas las personas lo necesitan a veces." },
+  { cat:"emociones", q:"Pedir ayuda cuando me siento mal es valiente.", answer:"v", explain:"¡Verdad! Contar lo que sientes a alguien de confianza es un acto de valentía y cuidado propio." }
+];
+const MOOD={ feliz:"¡Qué bueno! Disfruta ese momento. ¿Qué lo hizo especial hoy?", tranquilo:"La calma es un buen lugar. Respira y quédate un ratito aquí.", cansado:"Tu cuerpo pide descanso, y está bien escucharlo. Toma agua y date una pausa.", preocupado:"Es normal sentirse así. Contarle a alguien de confianza ayuda mucho.", triste:"Estar triste también es válido. Hablar con alguien que te quiere puede aliviar.", molesto:"El enojo avisa que algo importa. Respira hondo; abajo hay un ejercicio que ayuda." };
+let QUESTIONS=[
+  { categoria:"alimentacion", pregunta:"¿Por qué me da sueño después de comer?", respuesta:"Es normal. Después de comer, tu cuerpo usa energía para digerir y puede darte algo de sueño, sobre todo si la comida fue muy pesada. Comer porciones equilibradas y tomar agua ayuda a sentirte con más energía.", palabras:"sueño cansancio comer digestion pesado" },
+  { categoria:"alimentacion", pregunta:"¿Es malo comer dulces?", respuesta:"No hay alimentos malos prohibidos. Los dulces se pueden disfrutar de vez en cuando. Lo importante es el equilibrio: que la mayor parte del día comas cosas que te nutren.", palabras:"dulces azucar postre chocolate malo prohibido" },
+  { categoria:"ejercicio", pregunta:"¿Cuánto ejercicio debo hacer?", respuesta:"Lo ideal es estar activo un rato casi todos los días: jugar, caminar, bailar o hacer las rutinas de la app cuentan. Muévete con gusto y descansa cuando lo necesites.", palabras:"ejercicio cuanto tiempo actividad moverme deporte" },
+  { categoria:"ejercicio", pregunta:"Me da pereza hacer ejercicio, ¿qué hago?", respuesta:"Te entiendo. Un truco es empezar con algo cortito: pon tu canción favorita y muévete 5 minutos. Muchas veces, al empezar, dan ganas de seguir.", palabras:"pereza flojera desanimo ganas ejercicio empezar" },
+  { categoria:"emociones", pregunta:"¿Es normal sentirme triste sin razón?", respuesta:"Sí, es completamente normal. A veces las emociones aparecen sin un motivo claro. Prueba la respiración de la sección Cómo me siento. Si la tristeza dura muchos días, cuéntaselo a un adulto de confianza.", palabras:"triste tristeza sin razon animo decaido" },
+  { categoria:"emociones", pregunta:"¿Qué hago cuando estoy muy enojado?", respuesta:"El enojo es normal. Antes de reaccionar, respira hondo y despacio (hay un ejercicio en Cómo me siento). También ayuda alejarte un momento o contarle a alguien lo que sientes.", palabras:"enojo rabia molesto ira furioso enojado" },
+  { categoria:"crecimiento", pregunta:"¿Es normal que mi cuerpo esté cambiando?", respuesta:"Sí, totalmente normal. En la adolescencia el cuerpo cambia, y cada persona lo hace a su ritmo. Si tienes dudas, háblalas con tu familia o un profe de confianza.", palabras:"cuerpo cambios crecer crecimiento adolescencia normal" },
+  { categoria:"crecimiento", pregunta:"¿Por qué me salen granitos?", respuesta:"Los granitos son muy comunes al crecer. Aparecen por los cambios de hormonas, no por algo que hiciste mal. Lavarte la cara con suavidad ayuda.", palabras:"granitos acne espinillas piel cara" }
+];
+
+async function loadContent(){
+  if(!USE_SB) return;
+  try{
+    const [r,e,m,p]=await Promise.all([
+      sb.from('recetas').select('*').eq('activo',true).order('creado_en'),
+      sb.from('ejercicios').select('*').eq('activo',true).order('creado_en'),
+      sb.from('mitos').select('*').eq('activo',true).order('id'),
+      sb.from('preguntas').select('*').eq('activo',true).order('id')
+    ]);
+    if(r.data&&r.data.length) RECIPES=r.data.map(x=>({id:x.id,name:x.nombre,tags:x.etiquetas||[],why:x.porque||"",ing:x.ingredientes||[],steps:x.pasos||[]}));
+    if(e.data&&e.data.length) ROUTINES=e.data.map(x=>({id:x.id,name:x.nombre,meta:x.meta||"",secs:x.segundos||600,moves:x.pasos||[]}));
+    if(m.data&&m.data.length) MYTHS=m.data.map(x=>({cat:x.categoria,q:x.afirmacion,answer:x.es_verdad?'v':'m',explain:x.explicacion}));
+    if(p.data&&p.data.length) QUESTIONS=p.data.map(x=>({categoria:x.categoria,pregunta:x.pregunta,respuesta:x.respuesta,palabras:x.palabras||""}));
+  }catch(err){ console.warn('Uso contenido local.',err); }
+}
+
+const favSet=new Set(); const commentMap={};
+async function loadUserData(){
+  if(USE_SB){ try{
+    const f=await sb.from('favoritos').select('receta_id').eq('dispositivo',DEVICE); (f.data||[]).forEach(r=>favSet.add(r.receta_id));
+    const c=await sb.from('comentarios').select('receta_id,texto').eq('dispositivo',DEVICE); (c.data||[]).forEach(r=>commentMap[r.receta_id]=r.texto); return;
+  }catch(err){ console.warn(err); } }
+  const favs=await store.get('favs'); if(favs){ try{ JSON.parse(favs).forEach(id=>favSet.add(id)); }catch(e){} }
+}
+async function toggleFav(id,on){ if(USE_SB){ try{ if(on) await sb.from('favoritos').upsert({receta_id:id,dispositivo:DEVICE},{onConflict:'receta_id,dispositivo'}); else await sb.from('favoritos').delete().eq('receta_id',id).eq('dispositivo',DEVICE); return; }catch(err){ console.warn(err); } } await store.set('favs',JSON.stringify([...favSet])); }
+async function saveComment(id,texto){ if(USE_SB){ try{ await sb.from('comentarios').upsert({receta_id:id,dispositivo:DEVICE,texto},{onConflict:'receta_id,dispositivo'}); return; }catch(err){ console.warn(err); } } await store.set('cmt_'+id,texto); }
+async function getComment(id){ if(USE_SB) return commentMap[id]||""; return (await store.get('cmt_'+id))||""; }
+
+const HEART='<svg class="ico" viewBox="0 0 24 24"><path d="M20.8 5.6a5.4 5.4 0 0 0-7.6 0L12 6.7l-1.2-1.1a5.4 5.4 0 1 0-7.6 7.6L12 22l8.8-8.8a5.4 5.4 0 0 0 0-7.6z"/></svg>';
+const CHEV='<svg class="ico chev" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M9 6l6 6-6 6"/></svg>';
+
+const gate=document.getElementById('gate'), nameInput=document.getElementById('nameInput'), enterBtn=document.getElementById('enterBtn');
+function greet(name){ document.getElementById('who').textContent=name||"amig@"; document.getElementById('affirmText').textContent=AFFIRMATIONS[Math.floor(Math.random()*AFFIRMATIONS.length)]; }
+async function enter(){ const n=nameInput.value.trim(); if(n) await store.set('name',n); greet(n); gate.classList.add('hide'); }
+enterBtn.addEventListener('click',enter); nameInput.addEventListener('keydown',e=>{ if(e.key==='Enter') enter(); });
+document.querySelectorAll('.bottomnav button').forEach(b=>{ b.addEventListener('click',()=>{ document.querySelectorAll('.bottomnav button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); const k=b.dataset.k; document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.dataset.p===k)); window.scrollTo({top:0,behavior:'smooth'}); }); });
+
+const recBox=document.getElementById('recipes'); let currentFilter='all';
+function recipeCard(r){
+  const isFav=favSet.has(r.id);
+  const tagText=(r.tags||[]).includes('rapido')?'Lista en minutos':((r.tags||[]).includes('dulce')?'Dulce natural':'Plato completo');
+  const el=document.createElement('div'); el.className='recipe';
+  el.innerHTML=`<div class="band"></div><div class="body"><span class="tag">${tagText}</span>
+    <div class="row"><h3>${r.name}</h3><button class="fav ${isFav?'on':''}" aria-label="Guardar favorita">${HEART}</button></div>
+    <p class="why">${r.why}</p>
+    <details><summary>${CHEV} Ver ingredientes y preparación</summary>
+      <b style="font-size:13px">Necesitas:</b><ul>${(r.ing||[]).map(i=>`<li>${i}</li>`).join('')}</ul>
+      <b style="font-size:13px;display:block;margin-top:8px">Prepáralo así:</b><ol>${(r.steps||[]).map(s=>`<li>${s}</li>`).join('')}</ol></details>
+    <div class="cmt"><label>MI NOTA SOBRE ESTA RECETA</label><textarea placeholder="¿Te gustó? ¿Le cambiarías algo?"></textarea><span class="saved">Guardado</span></div></div>`;
+  const favBtn=el.querySelector('.fav');
+  favBtn.addEventListener('click',async()=>{ let on; if(favSet.has(r.id)){favSet.delete(r.id);favBtn.classList.remove('on');on=false;} else{favSet.add(r.id);favBtn.classList.add('on');on=true;} await toggleFav(r.id,on); if(currentFilter==='fav') render(); });
+  const ta=el.querySelector('textarea'), saved=el.querySelector('.saved'); let t;
+  ta.addEventListener('input',()=>{ clearTimeout(t); t=setTimeout(async()=>{ commentMap[r.id]=ta.value; await saveComment(r.id,ta.value); saved.classList.add('show'); setTimeout(()=>saved.classList.remove('show'),1500); },600); });
+  getComment(r.id).then(v=>{ if(v) ta.value=v; });
+  return el;
+}
+function render(){ recBox.innerHTML=''; let list=RECIPES;
+  if(currentFilter==='fav') list=RECIPES.filter(r=>favSet.has(r.id));
+  else if(currentFilter!=='all') list=RECIPES.filter(r=>(r.tags||[]).includes(currentFilter));
+  if(list.length===0){ recBox.innerHTML='<p style="color:var(--muted);grid-column:1/-1">Aún no tienes recetas aquí. Toca el corazón en una receta para guardarla.</p>'; return; }
+  list.forEach(r=>recBox.appendChild(recipeCard(r))); }
+document.querySelectorAll('#filters .chip').forEach(c=>{ c.addEventListener('click',()=>{ document.querySelectorAll('#filters .chip').forEach(x=>x.classList.remove('on')); c.classList.add('on'); currentFilter=c.dataset.f; render(); }); });
+
+const rBox=document.getElementById('routines');
+function fmt(s){ const m=Math.floor(s/60),ss=s%60; return `${m}:${ss<10?'0':''}${ss}`; }
+function renderRoutines(){ rBox.innerHTML='';
+  ROUTINES.forEach(rt=>{ const el=document.createElement('div'); el.className='routine';
+    el.innerHTML=`<h3>${rt.name}</h3><div class="meta">${rt.meta}</div><ol>${(rt.moves||[]).map(m=>`<li>${m}</li>`).join('')}</ol>
+      <div class="timer"><span class="clock">${fmt(rt.secs)}</span><button class="start">Empezar</button><button class="ghost reset">Reiniciar</button></div>`;
+    const clock=el.querySelector('.clock'), start=el.querySelector('.start'), reset=el.querySelector('.reset');
+    let left=rt.secs, iv=null, running=false;
+    function tick(){ left--; clock.textContent=fmt(left); if(left<=0){ clearInterval(iv); running=false; start.textContent='¡Listo!'; clock.textContent='0:00'; } }
+    start.addEventListener('click',()=>{ if(running){ clearInterval(iv); running=false; start.textContent='Seguir'; } else{ iv=setInterval(tick,1000); running=true; start.textContent='Pausa'; } });
+    reset.addEventListener('click',()=>{ clearInterval(iv); running=false; left=rt.secs; clock.textContent=fmt(left); start.textContent='Empezar'; });
+    rBox.appendChild(el); }); }
+
+document.querySelectorAll('#moodpick button').forEach(b=>{ b.addEventListener('click',()=>{ document.querySelectorAll('#moodpick button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); const msg=document.getElementById('moodmsg'); msg.textContent=MOOD[b.dataset.m]; msg.classList.add('show'); }); });
+const orb=document.getElementById('orb'), bLabel=document.getElementById('breathLabel'), bBtn=document.getElementById('breathBtn');
+let breathing=false, phaseTimers=[]; function clearPhases(){ phaseTimers.forEach(clearTimeout); phaseTimers=[]; }
+function cycle(){ bLabel.textContent='Inhala…'; phaseTimers.push(setTimeout(()=>bLabel.textContent='Sostén…',4000)); phaseTimers.push(setTimeout(()=>bLabel.textContent='Suelta despacio…',7000)); phaseTimers.push(setTimeout(()=>{ if(breathing) cycle(); },11000)); }
+bBtn.addEventListener('click',()=>{ breathing=!breathing; if(breathing){ orb.classList.add('run'); bBtn.textContent='Detener'; cycle(); } else{ orb.classList.remove('run'); bBtn.textContent='Empezar'; bLabel.textContent='Bien hecho'; clearPhases(); } });
+
+const mBox=document.getElementById('mythbox'); let mFilter='all';
+function renderMyths(){ mBox.innerHTML=''; const list=mFilter==='all'?MYTHS:MYTHS.filter(m=>m.cat===mFilter);
+  const catName={adolescencia:"Adolescencia",alimentacion:"Alimentación",emociones:"Emociones"};
+  list.forEach(m=>{ const el=document.createElement('div'); el.className='mcard';
+    el.innerHTML=`<span class="mcat">${catName[m.cat]||m.cat}</span><div class="q">${m.q}</div><div class="mtap">Toca para descubrir</div>
+      <div class="mreveal"><span class="verdict ${m.answer}">${m.answer==='v'?'Verdad':'Mito'}</span><p class="mexplain">${m.explain}</p></div>`;
+    el.addEventListener('click',()=>el.classList.toggle('open')); mBox.appendChild(el); }); }
+document.querySelectorAll('#mfilters .chip').forEach(c=>{ c.addEventListener('click',()=>{ document.querySelectorAll('#mfilters .chip').forEach(x=>x.classList.remove('on')); c.classList.add('on'); mFilter=c.dataset.mc; renderMyths(); }); });
+
+const chatlog=document.getElementById('chatlog'), chatInput=document.getElementById('chatInput'), chatSend=document.getElementById('chatSend'), suggestBox=document.getElementById('suggests');
+function bubble(text,who){ const b=document.createElement('div'); b.className='bub '+who; b.textContent=text; chatlog.appendChild(b); chatlog.scrollTop=chatlog.scrollHeight; return b; }
+function normaliza(s){ return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9ñ ]/g," "); }
+function mejorRespuesta(texto){ const t=normaliza(texto); const palabras=t.split(/\s+/).filter(w=>w.length>2); let best=null,bestScore=0;
+  QUESTIONS.forEach(q=>{ const campo=normaliza(q.pregunta+" "+q.palabras); let score=0; palabras.forEach(w=>{ if(campo.includes(w)) score++; }); if(score>bestScore){ bestScore=score; best=q; } });
+  return bestScore>=1?best.respuesta:null; }
+function renderSuggests(){ suggestBox.innerHTML=''; QUESTIONS.slice(0,6).forEach(q=>{ const b=document.createElement('button'); b.textContent=q.pregunta; b.addEventListener('click',()=>preguntar(q.pregunta)); suggestBox.appendChild(b); }); }
+function preguntar(texto){ const q=(texto||chatInput.value).trim(); if(!q) return; chatInput.value=''; bubble(q,'me');
+  const resp=mejorRespuesta(q); setTimeout(()=>{ if(resp) bubble(resp,'bot'); else bubble("Mmm, esa no la tengo todavía. Puedes tocar una de las preguntas de abajo, o contarle tu duda a tu profe o tu familia, que te ayudarán con gusto.","bot"); },250); }
+chatSend.addEventListener('click',()=>preguntar());
+chatInput.addEventListener('keydown',e=>{ if(e.key==='Enter') preguntar(); });
+
+document.getElementById('resetBtn').addEventListener('click',async()=>{ await store.set('name',''); gate.classList.remove('hide'); nameInput.value=''; nameInput.focus(); });
+
+(async function init(){
+  await initDevice(); await loadContent(); await loadUserData();
+  render(); renderRoutines(); renderMyths(); renderSuggests();
+  bubble("¡Hola! Soy Semi. Toca una pregunta de abajo o escríbeme tu duda sobre comer, moverte, crecer o cómo te sientes.","bot");
+  document.getElementById('dbflag').textContent = USE_SB ? "● Conectado a la base de datos" : "○ Modo de prueba (sin base de datos aún)";
+  const name=await store.get('name'); if(name){ greet(name); gate.classList.add('hide'); } else { setTimeout(()=>nameInput.focus(),400); }
+})();
+</script>
+</body>
+</html>
