@@ -595,21 +595,6 @@ function renderCartillasTema(){
     box.appendChild(g);
   });
 }
-  const box=document.getElementById('sentiCards'); box.innerHTML='';
-  SENTIMIENTOS.forEach(s=>{
-    const ejemplos=splitLines(s.ejemplos), ejercicios=splitLines(s.ejercicios), carts=CARTILLAS[s.clave]||[];
-    const el=document.createElement('div'); el.className='senti';
-    el.innerHTML=`<button class="senti-head"><span>${esc(s.etiqueta)}</span>${CHEV}</button>
-      <div class="senti-guide">
-        ${s.explicacion?`<p class="sg-exp">${esc(s.explicacion)}</p>`:''}
-        ${ejemplos.length?`<div class="sg-block"><h4>Te pasa cuando…</h4><ul>${ejemplos.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
-        ${ejercicios.length?`<div class="sg-block"><h4>Puedes probar…</h4><ul>${ejercicios.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
-        ${carts.length?`<div class="sg-block"><h4>Para saber más</h4><div class="sg-links">${carts.map(c=>`<a href="${esc(c.url)}" target="_blank" rel="noopener">${esc(c.titulo||'Ver material')}</a>`).join('')}</div></div>`:''}
-      </div>`;
-    el.querySelector('.senti-head').addEventListener('click',()=>el.classList.toggle('open'));
-    box.appendChild(el);
-  });
-
 const orb=document.getElementById('orb'), bLabel=document.getElementById('breathLabel'), bBtn=document.getElementById('breathBtn');
 let breathing=false, phaseTimers=[]; function clearPhases(){ phaseTimers.forEach(clearTimeout); phaseTimers=[]; }
 function cycle(){ bLabel.textContent='Inhala…'; phaseTimers.push(setTimeout(()=>bLabel.textContent='Sostén…',4000)); phaseTimers.push(setTimeout(()=>bLabel.textContent='Suelta despacio…',7000)); phaseTimers.push(setTimeout(()=>{ if(breathing) cycle(); },11000)); }
