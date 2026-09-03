@@ -609,7 +609,7 @@ function renderCartillasTema(){
     el.querySelector('.senti-head').addEventListener('click',()=>el.classList.toggle('open'));
     box.appendChild(el);
   });
-}
+
 const orb=document.getElementById('orb'), bLabel=document.getElementById('breathLabel'), bBtn=document.getElementById('breathBtn');
 let breathing=false, phaseTimers=[]; function clearPhases(){ phaseTimers.forEach(clearTimeout); phaseTimers=[]; }
 function cycle(){ bLabel.textContent='Inhala…'; phaseTimers.push(setTimeout(()=>bLabel.textContent='Sostén…',4000)); phaseTimers.push(setTimeout(()=>bLabel.textContent='Suelta despacio…',7000)); phaseTimers.push(setTimeout(()=>{ if(breathing) cycle(); },11000)); }
