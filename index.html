@@ -51,6 +51,10 @@
   .gate-logo{width:76px;height:76px;margin:0 auto 12px;color:var(--brand)}
   .gate-card h1{font-size:44px;margin-bottom:12px}
   .gate-tagline{display:inline-block;font-size:14px;font-weight:600;color:#5B4E7A;background:linear-gradient(transparent 55%,#E3DAF4 55%);padding:0 6px;margin:0 0 20px}
+  .gate-msg{font-size:13px;font-weight:600;min-height:16px;margin:-2px 0 10px}
+  .gate-msg.err{color:var(--myth-dark)} .gate-msg.ok{color:var(--food-dark)}
+  .btn-link{background:none;color:var(--muted);text-decoration:underline;font-size:13px;margin-top:12px;font-weight:600}
+  .gate-hint{font-size:11.5px;color:var(--muted);margin-top:14px}
   .gate-card input{width:100%;padding:15px 16px;border-radius:14px;border:1.5px solid var(--line);font-size:16px;font-family:inherit;text-align:center;margin-bottom:14px;background:#FDFAF6}
   .gate-card input:focus{outline:none;border-color:var(--brand)}
   .btn-primary{background:var(--ink);color:#fff;padding:15px 22px;border-radius:14px;font-weight:600;font-size:16px;width:100%;transition:transform .15s ease}
@@ -227,8 +231,12 @@
     </svg>
     <h1 class="wordmark">Entre<span class="nos">Nos</span></h1>
     <span class="gate-tagline">Un espacio para cuidarnos mientras crecemos</span>
-    <input id="nameInput" type="text" placeholder="Tu nombre" maxlength="24" autocomplete="off">
-    <button class="btn-primary" id="enterBtn">Entrar</button>
+    <input id="emailInput" type="email" placeholder="Correo del colegio" autocomplete="email">
+    <input id="passInput" type="password" placeholder="Contraseña" autocomplete="current-password">
+    <div class="gate-msg" id="gateMsg"></div>
+    <button class="btn-primary" id="authBtn">Entrar</button>
+    <button class="btn-link" id="toggleMode">¿No tienes cuenta? Crear una</button>
+    <div class="gate-hint" id="gateHint"></div>
   </div>
 </div>
 
@@ -338,7 +346,7 @@
     EntreNos · Espacio de bienestar escolar<br>
     Acompaña y orienta; no reemplaza la ayuda de un adulto o profesional.
     <div class="dbflag" id="dbflag"></div>
-    <button class="reset" id="resetBtn">Empezar de nuevo</button>
+    <button class="reset" id="resetBtn">Cerrar sesión</button>
   </footer>
 </div>
 
@@ -379,6 +387,10 @@ const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBh
    Si lo dejas vacío, no se muestra el escudo pero sí el nombre. */
 const ESCUDO_URL = "";
 const COLEGIO = "Colegio Americano de Barranquilla";
+
+/* 🔐 INGRESO — solo se aceptan correos de este dominio del colegio (sin @).
+   Cámbialo por el dominio real del correo institucional de los estudiantes. */
+const SCHOOL_DOMAIN = "colegio-americano.edu.co";
 
 let sb=null, USE_SB=false;
 try{ if(SUPABASE_ANON_KEY && !SUPABASE_ANON_KEY.startsWith("PEGA_AQUI") && window.supabase){ sb=window.supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY); USE_SB=true; } }catch(e){ USE_SB=false; }
@@ -487,10 +499,52 @@ async function getComment(id){ if(USE_SB) return commentMap[id]||""; return (awa
 const HEART='<svg class="ico" viewBox="0 0 24 24"><path d="M20.8 5.6a5.4 5.4 0 0 0-7.6 0L12 6.7l-1.2-1.1a5.4 5.4 0 1 0-7.6 7.6L12 22l8.8-8.8a5.4 5.4 0 0 0 0-7.6z"/></svg>';
 const CHEV='<svg class="ico chev" viewBox="0 0 24 24" style="width:15px;height:15px"><path d="M9 6l6 6-6 6"/></svg>';
 
-const gate=document.getElementById('gate'), nameInput=document.getElementById('nameInput'), enterBtn=document.getElementById('enterBtn');
-function greet(name){ document.getElementById('who').textContent=name||"amig@"; document.getElementById('affirmText').textContent=AFFIRMATIONS[Math.floor(Math.random()*AFFIRMATIONS.length)]; }
-async function enter(){ const n=nameInput.value.trim(); if(n) await store.set('name',n); greet(n); gate.classList.add('hide'); }
-enterBtn.addEventListener('click',enter); nameInput.addEventListener('keydown',e=>{ if(e.key==='Enter') enter(); });
+const gate=document.getElementById('gate');
+const emailInput=document.getElementById('emailInput'), passInput=document.getElementById('passInput');
+const authBtn=document.getElementById('authBtn'), gateMsg=document.getElementById('gateMsg'), toggleMode=document.getElementById('toggleMode'), gateHint=document.getElementById('gateHint');
+let authMode='signin';
+function greet(name){ const n=(name||'amig@'); document.getElementById('who').textContent=n.charAt(0).toUpperCase()+n.slice(1); document.getElementById('affirmText').textContent=AFFIRMATIONS[Math.floor(Math.random()*AFFIRMATIONS.length)]; }
+function setMsg(t,type){ gateMsg.textContent=t||''; gateMsg.className='gate-msg'+(type?(' '+type):''); }
+function updateMode(){ authBtn.textContent = authMode==='signup'?'Crear cuenta':'Entrar'; toggleMode.textContent = authMode==='signup'?'¿Ya tienes cuenta? Entrar':'¿No tienes cuenta? Crear una'; setMsg(''); }
+function traduceError(m){ m=(m||'').toLowerCase();
+  if(m.includes('invalid login')||m.includes('invalid credentials')) return 'Correo o contraseña incorrectos.';
+  if(m.includes('already') ) return 'Ese correo ya tiene cuenta. Inicia sesión.';
+  if(m.includes('password')) return 'La contraseña debe tener al menos 6 caracteres.';
+  if(m.includes('confirm')) return 'Debes confirmar tu correo antes de entrar. Revisa tu bandeja.';
+  return 'No se pudo completar. Revisa los datos e intenta de nuevo.'; }
+async function onLoggedIn(session){
+  DEVICE = session.user.id;
+  const nombre=(session.user.email||'').split('@')[0].replace(/[._-]+/g,' ').trim();
+  await store.set('name', nombre);
+  greet(nombre);
+  favSet.clear(); Object.keys(commentMap).forEach(k=>delete commentMap[k]);
+  await loadUserData(); render();
+  gate.classList.add('hide');
+}
+async function doAuth(){
+  if(!USE_SB){ gate.classList.add('hide'); return; }
+  const email=(emailInput.value||'').trim().toLowerCase(), pass=passInput.value||'';
+  if(!email||!pass){ setMsg('Escribe tu correo y contraseña.','err'); return; }
+  if(SCHOOL_DOMAIN && !email.endsWith('@'+SCHOOL_DOMAIN)){ setMsg('Usa tu correo del colegio (@'+SCHOOL_DOMAIN+').','err'); return; }
+  if(pass.length<6){ setMsg('La contraseña debe tener al menos 6 caracteres.','err'); return; }
+  authBtn.disabled=true; setMsg(authMode==='signup'?'Creando cuenta…':'Entrando…');
+  try{
+    if(authMode==='signup'){
+      const {data,error}=await sb.auth.signUp({email,password:pass});
+      if(error){ setMsg(traduceError(error.message),'err'); authBtn.disabled=false; return; }
+      if(data.session){ await onLoggedIn(data.session); }
+      else { setMsg('Cuenta creada. Revisa tu correo para confirmarla y luego inicia sesión.','ok'); authMode='signin'; updateMode(); }
+    } else {
+      const {data,error}=await sb.auth.signInWithPassword({email,password:pass});
+      if(error){ setMsg(traduceError(error.message),'err'); authBtn.disabled=false; return; }
+      await onLoggedIn(data.session);
+    }
+  }catch(e){ setMsg('No se pudo conectar. Intenta de nuevo.','err'); }
+  authBtn.disabled=false;
+}
+authBtn.addEventListener('click',doAuth);
+passInput.addEventListener('keydown',e=>{ if(e.key==='Enter') doAuth(); });
+toggleMode.addEventListener('click',()=>{ authMode=authMode==='signin'?'signup':'signin'; updateMode(); });
 document.querySelectorAll('.bottomnav button').forEach(b=>{ b.addEventListener('click',()=>{ document.querySelectorAll('.bottomnav button').forEach(x=>x.classList.remove('on')); b.classList.add('on'); const k=b.dataset.k; document.querySelectorAll('section.panel').forEach(p=>p.classList.toggle('on',p.dataset.p===k)); window.scrollTo({top:0,behavior:'smooth'}); }); });
 
 const recBox=document.getElementById('recipes'); let currentFilter='all';
@@ -621,17 +675,26 @@ function preguntar(texto){ const q=(texto||chatInput.value).trim(); if(!q) retur
 chatSend.addEventListener('click',()=>preguntar());
 chatInput.addEventListener('keydown',e=>{ if(e.key==='Enter') preguntar(); });
 
-document.getElementById('resetBtn').addEventListener('click',async()=>{ await store.set('name',''); gate.classList.remove('hide'); nameInput.value=''; nameInput.focus(); });
+document.getElementById('resetBtn').addEventListener('click',async()=>{
+  if(USE_SB&&sb){ try{ await sb.auth.signOut(); }catch(e){} }
+  favSet.clear(); Object.keys(commentMap).forEach(k=>delete commentMap[k]);
+  if(passInput) passInput.value='';
+  setMsg(''); gate.classList.remove('hide');
+});
 
 (async function init(){
   const cg=document.getElementById('colegioGate'), ch=document.getElementById('colegioHeader');
   if(cg) cg.textContent=COLEGIO; if(ch) ch.textContent=COLEGIO;
   if(ESCUDO_URL){ ['escudoGate','escudoHeader'].forEach(id=>{ const im=document.getElementById(id); if(im){ im.src=ESCUDO_URL; im.style.display=''; } }); }
-  await initDevice(); await loadContent(); await loadUserData();
+  await initDevice(); await loadContent();
   render(); renderMoverme(); renderMyths(); renderSuggests(); renderCartillasTema(); applySentir();
   bubble("¡Hola! Soy Semi. Toca una pregunta de abajo o escríbeme tu duda sobre comer, moverte, crecer o cómo te sientes.","bot");
   document.getElementById('dbflag').textContent = USE_SB ? "● Conectado a la base de datos" : "○ Modo de prueba (sin base de datos aún)";
-  const name=await store.get('name'); if(name){ greet(name); gate.classList.add('hide'); } else { setTimeout(()=>nameInput.focus(),400); }
+  updateMode();
+  if(gateHint) gateHint.textContent = USE_SB ? ('Usa tu correo del colegio (@'+SCHOOL_DOMAIN+').') : 'Modo de prueba: presiona Entrar.';
+  if(USE_SB){
+    try{ const {data}=await sb.auth.getSession(); if(data && data.session){ await onLoggedIn(data.session); } }catch(e){}
+  }
 })();
 </script>
 </body>
