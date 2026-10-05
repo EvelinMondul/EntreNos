@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>EntreNos</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><path d='M32 54C16 40 8 32 8 22c0-7 5-11 11-10 6 1 11 7 13 12 2-5 7-11 13-12 6-1 11 3 11 10 0 10-8 18-24 32z' fill='none' stroke='%23E8735A' stroke-width='5' stroke-linejoin='round'/></svg>">
+<title>CA Contigo</title>
+<link rel="icon" href="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/Gemini_Generated_Image_xp59xxxp59xxxp59.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
@@ -49,6 +49,8 @@
   #gate .gblob{position:absolute;border-radius:50%;opacity:.5;filter:blur(2px)}
   .gate-card{background:var(--card);border-radius:30px;padding:38px 28px;max-width:400px;width:100%;text-align:center;box-shadow:0 40px 90px -30px rgba(0,0,0,.45);position:relative;z-index:1}
   .gate-logo{width:76px;height:76px;margin:0 auto 12px;color:var(--brand)}
+  .gate-logo-img{width:110px;height:110px;object-fit:contain;display:block;margin:0 auto 6px}
+  .logo-img{width:40px;height:40px;object-fit:contain;flex:none}
   .gate-card h1{font-size:44px;margin-bottom:12px}
   .gate-tagline{display:inline-block;font-size:14px;font-weight:600;color:#5B4E7A;background:linear-gradient(transparent 55%,#E3DAF4 55%);padding:0 6px;margin:0 0 20px}
   .gate-msg{font-size:13px;font-weight:600;min-height:16px;margin:-2px 0 10px}
@@ -225,11 +227,8 @@
       <img id="escudoGate" class="escudo-gate" alt="Colegio Americano de Barranquilla" style="display:none">
       <span class="school-name" id="colegioGate"></span>
     </div>
-    <svg class="gate-logo" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M32 54C16 40 8 32 8 22c0-7 5-11 11-10 6 1 11 7 13 12 2-5 7-11 13-12 6-1 11 3 11 10 0 10-8 18-24 32z"/>
-      <path d="M14 30c-6 3-8 10-5 15"/><path d="M50 30c6 3 8 10 5 15"/>
-    </svg>
-    <h1 class="wordmark">Entre<span class="nos">Nos</span></h1>
+    <img class="gate-logo-img" src="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/Gemini_Generated_Image_xp59xxxp59xxxp59.png" alt="CA Contigo">
+    <h1 class="wordmark">CA<span class="nos">Contigo</span></h1>
     <span class="gate-tagline">Un espacio para cuidarnos mientras crecemos</span>
     <input id="emailInput" type="email" placeholder="Correo del colegio" autocomplete="email">
     <input id="passInput" type="password" placeholder="Contraseña" autocomplete="current-password">
@@ -244,11 +243,8 @@
   <header class="hero">
     <div class="brandrow">
       <img id="escudoHeader" class="escudo-head" alt="Colegio Americano de Barranquilla" style="display:none">
-      <svg class="logo" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M32 54C16 40 8 32 8 22c0-7 5-11 11-10 6 1 11 7 13 12 2-5 7-11 13-12 6-1 11 3 11 10 0 10-8 18-24 32z"/>
-        <path d="M14 30c-6 3-8 10-5 15"/><path d="M50 30c6 3 8 10 5 15"/>
-      </svg>
-      <span class="name">Entre<span class="nos">Nos</span></span>
+      <img class="logo-img" src="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/Gemini_Generated_Image_xp59xxxp59xxxp59.png" alt="CA Contigo">
+      <span class="name">CA<span class="nos">Contigo</span></span>
     </div>
     <div class="school-line" id="colegioHeader"></div>
     <div class="greet">Hola, <span class="accent" id="who">amig@</span></div>
@@ -343,7 +339,7 @@
 
   <footer>
     <span class="tagline">Aquí, todas las preguntas importan.</span>
-    EntreNos · Espacio de bienestar escolar<br>
+    CA Contigo · Espacio de bienestar escolar<br>
     Acompaña y orienta; no reemplaza la ayuda de un adulto o profesional.
     <div class="dbflag" id="dbflag"></div>
     <button class="reset" id="resetBtn">Cerrar sesión</button>
@@ -381,7 +377,6 @@
    ============================================================ */
 const SUPABASE_URL = "https://vrdfaxmjuxweleiifjtu.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyZGZheG1qdXh3ZWxlaWlmanR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NzUxNzMsImV4cCI6MjEwMjA1MTE3M30.fvN72vozpwnHxlhVRr9IVx1AyryuHZtoYu_4cKnAnWg";
-
 
 /* 🏫 COLEGIO — pega el enlace del escudo (de Supabase Storage) entre las comillas.
    Si lo dejas vacío, no se muestra el escudo pero sí el nombre. */
