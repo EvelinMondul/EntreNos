@@ -37,20 +37,22 @@
   /* ---------- Fondos orgánicos ---------- */
   .bg-blobs{position:fixed;inset:0;z-index:0;overflow:hidden;pointer-events:none}
   .blob{position:absolute;border-radius:52% 48% 50% 50%/50% 52% 48% 50%;opacity:.4;filter:blur(4px)}
-  .b1{width:280px;height:260px;background:#F7D8CE;top:-90px;left:-80px}
-  .b2{width:240px;height:230px;background:#E3DAF4;top:-70px;right:-70px}
-  .b3{width:260px;height:250px;background:#DCEEDD;bottom:60px;left:-90px}
-  .b4{width:230px;height:220px;background:#FBE6CF;bottom:-40px;right:-70px}
+  .b1{width:280px;height:260px;background:#FBD9CF;top:-90px;left:-80px}
+  .b2{width:240px;height:230px;background:#D4DFF2;top:-70px;right:-70px}
+  .b3{width:260px;height:250px;background:#DCE5F4;bottom:60px;left:-90px}
+  .b4{width:230px;height:220px;background:#FCE2D3;bottom:-40px;right:-70px}
 
   /* ---------- Bienvenida ---------- */
   #gate{position:fixed;inset:0;z-index:80;display:flex;align-items:center;justify-content:center;padding:24px;overflow:hidden;
-    background:linear-gradient(160deg,#F6C5B6 0%,#D8CBF0 52%,#F8DFC0 120%);transition:opacity .5s ease}
+    background:linear-gradient(160deg,#F3A68E 0%,#C3D1EC 55%,#F7D9C4 120%);transition:opacity .5s ease}
   #gate.hide{opacity:0;pointer-events:none}
   #gate .gblob{position:absolute;border-radius:50%;opacity:.5;filter:blur(2px)}
   .gate-card{background:var(--card);border-radius:30px;padding:38px 28px;max-width:400px;width:100%;text-align:center;box-shadow:0 40px 90px -30px rgba(0,0,0,.45);position:relative;z-index:1}
   .gate-logo{width:76px;height:76px;margin:0 auto 12px;color:var(--brand)}
-  .gate-logo-img{width:200px;height:200px;object-fit:contain;display:block;margin:0 auto 10px}
-  .logo-img{width:120px;height:120px;object-fit:contain;flex:none}
+  .logo-wrap{width:190px;height:155px;overflow:hidden;margin:0 auto 8px;display:flex;align-items:center;justify-content:center}
+  .gate-logo-img{width:100%;height:auto;transform:scale(1.28)}
+  .logo-wrap-h{width:86px;height:70px;overflow:hidden;flex:none;display:flex;align-items:center;justify-content:center}
+  .logo-img{width:100%;height:auto;transform:scale(1.28)}
   .gate-card h1{font-size:44px;margin-bottom:12px}
   .gate-tagline{display:inline-block;font-size:14px;font-weight:600;color:#5B4E7A;background:linear-gradient(transparent 55%,#E3DAF4 55%);padding:0 6px;margin:0 0 20px}
   .gate-msg{font-size:13px;font-weight:600;min-height:16px;margin:-2px 0 10px}
@@ -219,15 +221,15 @@
 
 <!-- ===== Bienvenida ===== -->
 <div id="gate">
-  <div class="gblob" style="width:150px;height:150px;background:#F2B8A6;top:8%;left:6%"></div>
-  <div class="gblob" style="width:120px;height:120px;background:#CFC0EC;bottom:12%;right:8%"></div>
-  <div class="gblob" style="width:90px;height:90px;background:#C9E4CB;top:16%;right:16%"></div>
+  <div class="gblob" style="width:150px;height:150px;background:#F2A48C;top:8%;left:6%"></div>
+  <div class="gblob" style="width:120px;height:120px;background:#AEC2E6;bottom:12%;right:8%"></div>
+  <div class="gblob" style="width:90px;height:90px;background:#F6CBB8;top:16%;right:16%"></div>
   <div class="gate-card">
     <div class="school-top">
       <img id="escudoGate" class="escudo-gate" alt="Colegio Americano de Barranquilla" style="display:none">
       <span class="school-name" id="colegioGate"></span>
     </div>
-    <img class="gate-logo-img" src="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/Gemini_Generated_Image_xp59xxxp59xxxp59.png" alt="CA Contigo">
+    <div class="logo-wrap"><img class="gate-logo-img" src="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/Gemini_Generated_Image_xp59xxxp59xxxp59.png" alt="CA Contigo"></div>
     <span class="gate-tagline">Un espacio para cuidarnos mientras crecemos</span>
     <input id="emailInput" type="email" placeholder="Correo del colegio" autocomplete="email">
     <input id="passInput" type="password" placeholder="Contraseña" autocomplete="current-password">
@@ -242,7 +244,7 @@
   <header class="hero">
     <div class="brandrow">
       <img id="escudoHeader" class="escudo-head" alt="Colegio Americano de Barranquilla" style="display:none">
-      <img class="logo-img" src="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/Gemini_Generated_Image_xp59xxxp59xxxp59.png" alt="CA Contigo">
+      <div class="logo-wrap-h"><img class="logo-img" src="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/Gemini_Generated_Image_xp59xxxp59xxxp59.png" alt="CA Contigo"></div>
     </div>
     <div class="school-line" id="colegioHeader"></div>
     <div class="greet">Hola, <span class="accent" id="who">amig@</span></div>
