@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>CA Contigo</title>
-<link rel="icon" href="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/Gemini_Generated_Image_xp59xxxp59xxxp59.png">
+<link rel="icon" href="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/ca_contigo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=Pacifico&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   /* ============================================================
-      PALETA PASTEL
+      PALETA PASTEL —
      ============================================================ */
   :root{
     --paper:#FBF4EC; --ink:#2E3150; --muted:#8A85A0; --card:#FFFFFF; --line:#EFE6DC;
@@ -51,7 +51,7 @@
   .logo-wrap{margin:0 auto 8px;display:flex;align-items:center;justify-content:center}
   .gate-logo-img{width:140px;height:auto;display:block}
   .logo-wrap-h{flex:none;display:flex;align-items:center;justify-content:center}
-  .logo-img{width:64px;height:auto;display:block;mix-blend-mode:multiply}
+  .logo-img{width:64px;height:auto;display:block}
   .gate-card h1{font-size:44px;margin-bottom:12px}
   .gate-tagline{display:inline-block;font-size:14px;font-weight:600;color:#5B4E7A;background:linear-gradient(transparent 55%,#E3DAF4 55%);padding:0 6px;margin:0 0 20px}
   .gate-msg{font-size:13px;font-weight:600;min-height:16px;margin:-2px 0 10px}
@@ -228,7 +228,7 @@
       <img id="escudoGate" class="escudo-gate" alt="Colegio Americano de Barranquilla" style="display:none">
       <span class="school-name" id="colegioGate"></span>
     </div>
-    <div class="logo-wrap"><img class="gate-logo-img" src="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/Gemini_Generated_Image_xp59xxxp59xxxp59.png" alt="CA Contigo"></div>
+    <div class="logo-wrap"><img class="gate-logo-img" src="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/ca_contigo.png" alt="CA Contigo"></div>
     <span class="gate-tagline">Un espacio para cuidarnos mientras crecemos</span>
     <input id="emailInput" type="email" placeholder="Correo del colegio" autocomplete="email">
     <input id="passInput" type="password" placeholder="Contraseña" autocomplete="current-password">
@@ -243,7 +243,7 @@
   <header class="hero">
     <div class="brandrow">
       <img id="escudoHeader" class="escudo-head" alt="Colegio Americano de Barranquilla" style="display:none">
-      <div class="logo-wrap-h"><img class="logo-img" src="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/Gemini_Generated_Image_xp59xxxp59xxxp59.png" alt="CA Contigo"></div>
+      <div class="logo-wrap-h"><img class="logo-img" src="https://vrdfaxmjuxweleiifjtu.supabase.co/storage/v1/object/public/publico/ca_contigo.png" alt="CA Contigo"></div>
     </div>
     <div class="school-line" id="colegioHeader"></div>
     <div class="greet">Hola, <span class="accent" id="who">amig@</span></div>
@@ -372,12 +372,13 @@
 
 <script>
 /* ============================================================
-   🔌 CONEXIÓN A SUPABASE — pega tu clave anon public abajo.
+    CONEXIÓN A SUPABASE 
    ============================================================ */
 const SUPABASE_URL = "https://vrdfaxmjuxweleiifjtu.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyZGZheG1qdXh3ZWxlaWlmanR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NzUxNzMsImV4cCI6MjEwMjA1MTE3M30.fvN72vozpwnHxlhVRr9IVx1AyryuHZtoYu_4cKnAnWg";
 
-/* COLEGIO — enlace del escudo (de Supabase Storage) */
+/* 🏫 COLEGIO — pega el enlace del escudo (de Supabase Storage) entre las comillas.
+   Si lo dejas vacío, no se muestra el escudo pero sí el nombre. */
 const ESCUDO_URL = "";
 const COLEGIO = "Colegio Americano de Barranquilla";
 
