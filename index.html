@@ -11,7 +11,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
   /* ============================================================
-      PALETA PASTEL 
+      PALETA PASTEL
      ============================================================ */
   :root{
     --paper:#FBF4EC; --ink:#2E3150; --muted:#8A85A0; --card:#FFFFFF; --line:#EFE6DC;
@@ -51,7 +51,7 @@
   .logo-wrap{margin:0 auto 8px;display:flex;align-items:center;justify-content:center}
   .gate-logo-img{width:140px;height:auto;display:block}
   .logo-wrap-h{flex:none;display:flex;align-items:center;justify-content:center}
-  .logo-img{width:64px;height:auto;display:block}
+  .logo-img{width:64px;height:auto;display:block;mix-blend-mode:multiply}
   .gate-card h1{font-size:44px;margin-bottom:12px}
   .gate-tagline{display:inline-block;font-size:14px;font-weight:600;color:#5B4E7A;background:linear-gradient(transparent 55%,#E3DAF4 55%);padding:0 6px;margin:0 0 20px}
   .gate-msg{font-size:13px;font-weight:600;min-height:16px;margin:-2px 0 10px}
@@ -372,17 +372,16 @@
 
 <script>
 /* ============================================================
-    CONEXIÓN A SUPABASE.
+   🔌 CONEXIÓN A SUPABASE — pega tu clave anon public abajo.
    ============================================================ */
 const SUPABASE_URL = "https://vrdfaxmjuxweleiifjtu.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZyZGZheG1qdXh3ZWxlaWlmanR1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY0NzUxNzMsImV4cCI6MjEwMjA1MTE3M30.fvN72vozpwnHxlhVRr9IVx1AyryuHZtoYu_4cKnAnWg";
 
-/*  COLEGIO — pega el enlace del escudo (de Supabase Storage) entre las comillas.
-   Si lo dejas vacío, no se muestra el escudo pero sí el nombre. */
+/* COLEGIO — enlace del escudo (de Supabase Storage) */
 const ESCUDO_URL = "";
 const COLEGIO = "Colegio Americano de Barranquilla";
 
-/*  INGRESO — solo se aceptan correos de este dominio del colegio (sin @).
+/* 🔐 INGRESO — solo se aceptan correos de este dominio del colegio (sin @).
    Cámbialo por el dominio real del correo institucional de los estudiantes. */
 const SCHOOL_DOMAIN = "colegio-americano.edu.co";
 
